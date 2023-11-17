@@ -238,11 +238,17 @@ public class SchedulingAlgorithm {
           }
           displayListProcess(linkedListOfProcess, currentProcess);
           if (currentProcess.burstTime == 0) {
+            runningTime.set(0);
+            linkedListOfProcessNow.remove(currentProcess);
             linkedListOfWaitingTimeProcess.add(currentProcess.waitingTime);
+          } else {
+            runningTime.getAndSet(runningTime.get() + 1);
           }
         }
         secondsNow++;
-        runningTime.getAndSet(runningTime.get() + 1);
+        if (linkedListOfProcessNow.size() == 0) {
+          countDownLatch.countDown();
+        }
       }, 0, 1, TimeUnit.SECONDS);
     }
   }
